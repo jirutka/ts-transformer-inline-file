@@ -1,0 +1,7 @@
+/.*cache/
+/.tmp/
+/coverage/
+/dist/
+/lib/
+/*.d.ts
+/*.js

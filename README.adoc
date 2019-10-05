@@ -1,0 +1,71 @@
+= TypeScript transformer for inlining files
+:npm-name: ts-transformer-inline-file
+:gh-name: jirutka/{npm-name}
+:gh-branch: master
+:vs-marketplace-uri: https://marketplace.visualstudio.com/items?itemName=
+
+ifdef::env-github[]
+image:https://travis-ci.com/{gh-name}.svg?branch={gh-branch}[Build Status, link="https://travis-ci.com/{gh-name}"]
+image:https://img.shields.io/npm/v/{npm-name}.svg[npm Version, link="https://www.npmjs.org/package/{npm-name}"]
+endif::env-github[]
+
+TODO
+
+
+== Development
+
+== System Requirements
+
+* https://nodejs.org[NodeJS] 10.13+
+* https://yarnpkg.com[yarn] 1.6+ (but you may use npm as well)
+
+
+=== Used Tools
+
+* https://www.typescriptlang.org[TypeScript] the language
+* https://yarnpkg.com[yarn] for dependencies management and building
+* https://eslint.org[ESLint] for linting JS/TypeScript code
+* https://github.com/substack/tape[tape] for testing
+
+
+=== How to Start
+
+. Clone this repository:
+[source, subs="+attributes"]
+git clone git@github.com:{gh-name}.git
+cd {npm-name}
+
+. Install Yarn (if you don’t have it already):
+[source]
+npm install -g yarn
+
+. Install all JS dependencies:
+[source]
+yarn install
+
+. Build the project:
+[source]
+yarn build
+
+. Run tests:
+[source]
+yarn test
+
+. Run linter:
+[source]
+yarn lint
+
+
+=== Visual Studio Code
+
+If you use Visual Studio Code, you may find the following extensions useful:
+
+* link:{vs-marketplace-uri}EditorConfig.EditorConfig[EditorConfig for VS Code]
+* link:{vs-marketplace-uri}dbaeumer.vscode-eslint[ESLint]
+* link:{vs-marketplace-uri}gamunu.vscode-yarn[yarn]
+
+
+== License
+
+This project is licensed under http://opensource.org/licenses/MIT/[MIT License].
+For the full text of the license, see the link:LICENSE[LICENSE] file.

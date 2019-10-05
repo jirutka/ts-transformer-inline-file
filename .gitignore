@@ -1,0 +1,10 @@
+/coverage/
+/dist/
+/lib/
+/.*cache/
+/.tmp/
+node_modules/
+/*.d.ts
+/index.js
+*.log
+*.[jt]s.map
