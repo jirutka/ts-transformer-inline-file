@@ -3,5 +3,6 @@
 /coverage/
 /dist/
 /lib/
+/test/fixtures/
 /*.d.ts
 /*.js

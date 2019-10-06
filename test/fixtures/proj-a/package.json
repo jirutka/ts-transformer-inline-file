@@ -1,0 +1,22 @@
+{
+  "name": "fixture-package",
+  "version": "0.1.0",
+  "license": "MIT",
+  "keywords": [
+    "inline",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "ttsc",
+    "clean": "rimraf lib"
+  },
+  "dependencies": {
+    "ts-transformer-inline-file": "link:../../../"
+  },
+  "devDependencies": {
+    "@types/node": "^10.13.0",
+    "rimraf": "^3.0.0",
+    "ttypescript": "^1.5.7",
+    "typescript": "^3.6.3"
+  }
+}

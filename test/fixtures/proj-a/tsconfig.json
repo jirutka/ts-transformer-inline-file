@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "outDir": "./lib",
+    "sourceMap": false,
+
+    "resolveJsonModule": true,
+
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "package.json": ["../node_modules/ts-transformer-inline-file"]
+    },
+
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    "plugins": [
+      { "transform": "ts-transformer-inline-file/transformer" },
+    ]
+  },
+  "include": [
+    "src",
+  ],
+  "exclude": [
+    "node_modules",
+  ],
+}

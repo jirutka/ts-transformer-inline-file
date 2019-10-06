@@ -63,6 +63,7 @@
   },
   "include": [
     "index.ts",
+    "transformer.ts",
   ],
   "exclude": [
     "node_modules",

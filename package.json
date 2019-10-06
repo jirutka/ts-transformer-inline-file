@@ -27,13 +27,16 @@
   ],
   "scripts": {
     "build": "tsc --build",
-    "clean": "rimraf coverage/ index.{d.ts,d.ts.map,js,js.map} *.log",
+    "clean": "rimraf coverage/ index.{d.ts,d.ts.map,js,js.map} transformer.{d.ts,d.ts.map,js,js.map} *.log",
     "lint": "eslint --ext .ts,.js .",
     "test": "tsc --build && ts-node node_modules/.bin/tape test/*.test.ts",
     "watch-ts": "tsc -w"
   },
   "engines": {
     "node": ">=10.13.0"
+  },
+  "peerDependencies": {
+    "typescript": "^2.4.1 || ^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^10.13.0",
