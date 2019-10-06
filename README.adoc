@@ -9,7 +9,143 @@ image:https://travis-ci.com/{gh-name}.svg?branch={gh-branch}[Build Status, link=
 image:https://img.shields.io/npm/v/{npm-name}.svg[npm Version, link="https://www.npmjs.org/package/{npm-name}"]
 endif::env-github[]
 
-TODO
+This is a TypeScript AST transformer footnote:[If you’ve never heard about TypeScript transformers, I can recommend https://blog.logrocket.com/using-typescript-transforms-to-enrich-runtime-code-3fd2863221ed/[this blog post] to dive into the topic.] that allows you to include content of a file into the transpiled code, i.e. _inline it_ in build-time.
+
+You can think about it as a C preprocessor’s directive `#include` but more powerful… way more powerful.
+If the referenced file is a JSON file, it doesn’t include it as a string but converts the JSON to an object literal.
+Thus it can be further optimized by a minifier.
+Moreover, if you use an object destructing assignment, this transformer will optimize it itself -- include only the assigned properties!
+
+
+== Usage
+
+Let’s start with examples!
+However, to make them work, you have to <<How to Configure the Transformer, configure the transformer>> first.
+
+
+=== Inline Any Textual File
+
+[source, js, subs="+attributes"]
+----
+import { $INLINE_FILE } from '{npm-name}'
+
+const words = $INLINE_FILE('../data/words.txt').split(' ')
+----
+
+The last line will be transformed to:
+
+[source, js]
+const words = "lorem ipsum dolor\n".strip().split(' ');
+
+…where `"lorem ipsum dolor\n"` is full content of the file `../data/words.txt`.
+
+
+=== Inline JSON Data
+
+[source, js, subs="+attributes"]
+----
+import { $INLINE_JSON } from '{npm-name}'
+
+const pkg = $INLINE_JSON('../package.json')
+----
+
+The last line will be transformed to:
+
+[source, js]
+const pkg = { "name": "my-package", "version": "0.1.0", "license": "MIT", ... }
+
+However, if you need only few properties from the referenced JSON file, use object destructuring assignment:
+
+[source, js]
+const { name, version } = $INLINE_JSON('../package.json')
+
+…and the transformer will include only the assigned properties:
+
+[source, js]
+const { name, version } = { "name": "my-package", "version": "0.1.0" }
+
+NOTE: This works only for the top level; filtering of nested properties is currently not supported.
+
+
+== How to Configure the Transformer
+
+Unfortunately, TypeScript itself does not currently provide any easy way to use custom transformers (see https://github.com/Microsoft/TypeScript/issues/14419[Microsoft/TypeScript#14419]).
+Fortunately, there are few solutions.
+
+
+=== TTypescript
+
+If you don’t use any bundler such as Rollup or webpack, https://github.com/cevek/ttypescript[TTypescript] is the way to go.
+It provides wrappers `ttsc` and `ttserver` for the `tsc` and `tsserver` commands that add support for custom transformers.
+All you have to do is to use these wrappers instead of the original commands and define the transformer in your `tsconfig.json`:
+
+.*tsconfig.json:*
+[source, jsonc, subs="+attributes"]
+----
+{
+  "compilerOptions": {
+    // ...
+    "plugins": [
+      { "transform": "{npm-name}/transformer" }
+    ]
+  },
+  // ...
+}
+----
+
+See link:test/fixtures/proj-a[] for example.
+
+
+=== Rollup (with rollup-plugin-typescript2)
+
+.*rollup.config.js:*
+[source, js, subs="+attributes"]
+----
+import typescript from 'rollup-plugin-typescript2'
+import packageJsonTransformer from '{npm-name}/transformer'
+
+export default {
+  // ...
+  plugins: [
+    typescript({
+      transformers: [
+        (service) => ({
+          before: [ packageJsonTransformer(service.getProgram()) ],
+          after: [],
+        }),
+      ],
+    }),
+  ],
+}
+----
+
+
+=== Webpack (with ts-loader or awesome-typescript-loader)
+
+.*webpack.config.js:*
+[source, js, subs="+attributes"]
+----
+const packageJsonTransformer = require('{npm-name}/transformer').default
+
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader', // or 'awesome-typescript-loader',
+        options: {
+          getCustomTransformers: (program) => ({
+            before: [
+              packageJsonTransformer(program),
+            ],
+          }),
+        },
+      },
+    ],
+  },
+}
+----
 
 
 == Development
