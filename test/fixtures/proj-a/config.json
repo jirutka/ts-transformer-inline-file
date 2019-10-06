@@ -1,5 +1,6 @@
 {
-  "name": "proj-a",
+  "name": "proj",
+  "count": 42,
   "tags": [
     "foo",
     "bar"

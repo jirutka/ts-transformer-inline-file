@@ -58,12 +58,24 @@ function handleInlineCallExpression (node: ts.CallExpression, funcName: string):
   const content = fs.readFileSync(path.resolve(baseDir, filename), 'utf-8')
 
   switch (funcName) {
-    case '$INLINE_FILE':
+    case '$INLINE_FILE': {
       return ts.createStringLiteral(content)
-    case '$INLINE_JSON':
-      return createJSONParseCall(JSON.stringify(JSON.parse(content)))
-    default:
+    }
+    case '$INLINE_JSON': {
+      const parent = node.parent
+      let obj = JSON.parse(content)
+
+      if (ts.isVariableDeclaration(parent) && ts.isObjectBindingPattern(parent.name)) {
+        if (typeof obj !== 'object') {
+          throw TypeError(`${filename} does not contain an object as expected`)
+        }
+        obj = filterObjectByBindingPattern(obj, parent.name)
+      }
+      return createJSONParseCall(JSON.stringify(obj))
+    }
+    default: {
       throw RangeError(`Unknown function: ${funcName}`)
+    }
   }
 }
 
@@ -71,6 +83,18 @@ function isOurStubModule (sourceFile: ts.SourceFile): boolean {
   // Comparing of the file names may not be reliable, it doesn't work e.g. with
   // yarn's "link" resolution used in this module's end-to-end tests.
   return sourceFile.text === stubModuleSource
+}
+
+function filterObjectByBindingPattern (obj: any, binding: ts.ObjectBindingPattern): any {
+  return binding.elements.reduce((acc, { propertyName, name }) => {
+    const propName = propertyName && ts.isIdentifier(propertyName) ? propertyName.text
+      : ts.isIdentifier(name) ? name.text
+      : undefined
+    if (propName) {
+      acc[propName] = obj[propName]
+    }
+    return acc
+  }, {} as any)
 }
 
 function createJSONParseCall (arg0: string): ts.CallExpression {
