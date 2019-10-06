@@ -92,8 +92,6 @@ All you have to do is to use these wrappers instead of the original commands and
 }
 ----
 
-See link:test/fixtures/proj-a[] for example.
-
 
 === Rollup (with rollup-plugin-typescript2)
 
