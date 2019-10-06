@@ -71,7 +71,7 @@ function handleInlineCallExpression (node: ts.CallExpression, funcName: string):
         }
         obj = filterObjectByBindingPattern(obj, parent.name)
       }
-      return createJSONParseCall(JSON.stringify(obj))
+      return jsonToAST(obj)
     }
     default: {
       throw RangeError(`Unknown function: ${funcName}`)
@@ -97,13 +97,18 @@ function filterObjectByBindingPattern (obj: any, binding: ts.ObjectBindingPatter
   }, {} as any)
 }
 
-function createJSONParseCall (arg0: string): ts.CallExpression {
-  return ts.createCall(
-    ts.createPropertyAccess(
-      ts.createIdentifier('JSON'),
-      ts.createIdentifier('parse'),
-    ),
-    undefined,
-    [ts.createStringLiteral(arg0)],
-  )
+function jsonToAST (obj: any): ts.Expression {
+  if (obj === null) {
+    return ts.createNull()
+  }
+  if (Array.isArray(obj)) {
+    return ts.createArrayLiteral(obj.map(jsonToAST))
+  }
+  if (typeof obj === 'object') {
+    return ts.createObjectLiteral(Object.keys(obj).map(key => {
+      const propName = ts.createStringLiteral(key)
+      return ts.createPropertyAssignment(propName, jsonToAST(obj[key]))
+    }))
+  }
+  return ts.createLiteral(obj)
 }

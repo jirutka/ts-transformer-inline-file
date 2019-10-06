@@ -1,8 +1,11 @@
 {
-  "name": "proj",
-  "count": 42,
-  "tags": [
+  "str": "lol",
+  "num-x": 42,
+  "ary": [
     "foo",
-    "bar"
-  ]
+    false
+  ],
+  "obj": {
+    "a": null
+  }
 }

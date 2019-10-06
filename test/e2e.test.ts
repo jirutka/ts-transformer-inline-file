@@ -8,8 +8,6 @@ import test from 'tape'
 
 const fixtureDir = path.join(__dirname, 'fixtures/proj-a')
 
-const jsonStringify2 = (obj: any) => JSON.stringify(JSON.stringify(obj))
-
 const readFile = (filename: string) => fs.readFileSync(filename, 'utf8')
 
 
@@ -36,21 +34,18 @@ test('$INLINE_FILE', t => {
 
 test('$INLINE_JSON', t => {
   const source = readFile('./lib/inline-json.js')
-  const obj = JSON.parse(readFile('./config.json'))
 
   t.notIncludes(source, '$INLINE_JSON')
-  t.includes(source, `foo = JSON.parse(${jsonStringify2(obj)})`)
+  t.includes(source, 'foo = { "str": "lol", "num-x": 42, "ary": ["foo", false], "obj": { "a": null } }')
 
   t.end()
 })
 
 test('$INLINE_JSON with object destructuring', t => {
   const source = readFile('./lib/inline-json-obj-destructuring.js')
-  const origObj = JSON.parse(readFile('./package.json'))
-  const obj = { name: origObj.name, version: origObj.version }
 
   t.notIncludes(source, '$INLINE_JSON')
-  t.includes(source, `{ name, version: VER } = JSON.parse(${jsonStringify2(obj)})`)
+  t.includes(source, '{ name, version: VER } = { "name": "fixture-package", "version": "0.1.0" }')
 
   t.end()
 })
