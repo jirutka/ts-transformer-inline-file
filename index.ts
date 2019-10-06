@@ -1,7 +1,8 @@
 /**
  * Includes (inlines) content of the specified file into the source file.
  * Call of this function will be replaced with the file's content by
- * the TypeScript transformer.
+ * the TypeScript transformer. It will also remove import of this module,
+ * so you don't need it in run-time.
  *
  * @param filename The path of the file to include (relative to the caller file).
  * @return A content of the *filename*.
@@ -11,7 +12,8 @@ export declare function $INLINE_FILE (filename: string): string
 /**
  * Includes (inlines) the specified JSON file as an literal object.
  * Call of this function will be replaced with the foregoing by the TypeScript
- * transformer.
+ * transformer. It will also remove import of this module, so you don't need
+ * it in run-time.
  *
  * If call of this function is directly preceded by an object destructuring
  * assignment, then the object literal will be filtered to contain only the

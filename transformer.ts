@@ -11,19 +11,26 @@ export default function transformer (program: ts.Program): ts.TransformerFactory
 }
 
 function visitNodeAndChildren (node: ts.SourceFile, program: ts.Program, context: ts.TransformationContext): ts.SourceFile
-function visitNodeAndChildren (node: ts.Node, program: ts.Program, context: ts.TransformationContext): ts.Node
-function visitNodeAndChildren (node: ts.Node, program: ts.Program, context: ts.TransformationContext): ts.Node {
-  return ts.visitEachChild(
-    visitNode(node, program),
-    (childNode) => visitNodeAndChildren(childNode, program, context),
-    context,
-  )
+function visitNodeAndChildren (node: ts.Node, program: ts.Program, context: ts.TransformationContext): ts.VisitResult<ts.Node>
+function visitNodeAndChildren (node: ts.Node, program: ts.Program, context: ts.TransformationContext): ts.VisitResult<ts.Node> {
+  const newNode = visitNode(node, program)
+
+  return newNode
+    ? ts.visitEachChild(newNode, (child) => visitNodeAndChildren(child, program, context), context)
+    : undefined
 }
 
-function visitNode (node: ts.Node, program: ts.Program): ts.Node {
-  if (!ts.isCallExpression(node)) {
-    return node
+function visitNode (node: ts.Node, program: ts.Program): ts.Node | undefined {
+  if (ts.isCallExpression(node)) {
+    return visitCallExpression(node, program)
   }
+  if (ts.isImportDeclaration(node)) {
+    return visitImportClause(node, program)
+  }
+  return node
+}
+
+function visitCallExpression (node: ts.CallExpression, program: ts.Program): ts.Node {
   const typeChecker = program.getTypeChecker()
 
   const signature = typeChecker.getResolvedSignature(node)
@@ -44,6 +51,24 @@ function visitNode (node: ts.Node, program: ts.Program): ts.Node {
   }
 
   return handleInlineCallExpression(node, funcName)
+}
+
+function visitImportClause (node: ts.ImportDeclaration, program: ts.Program): ts.Node | undefined {
+  if (!node.importClause) {
+    return node
+  }
+
+  const namedBindings = node.importClause.namedBindings
+  if (!node.importClause.name && !namedBindings) {
+    return node
+  }
+
+  const importSymbol = program.getTypeChecker().getSymbolAtLocation(node.moduleSpecifier)
+  if (!importSymbol || !isOurStubModule(importSymbol.valueDeclaration.getSourceFile())) {
+    return node
+  }
+
+  return undefined  // drop the import
 }
 
 function handleInlineCallExpression (node: ts.CallExpression, funcName: string): ts.Node {

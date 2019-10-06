@@ -19,8 +19,7 @@ Moreover, if you use an object destructing assignment, this transformer will opt
 
 == Usage
 
-Let’s start with examples!
-However, to make them work, you have to <<How to Configure the Transformer, configure the transformer>> first.
+Add {npm-name} package to your project as a **dev**elopment dependency and <<How to Configure the Transformer, configure the transformer>>.
 
 
 === Inline Any Textual File
@@ -32,7 +31,7 @@ import { $INLINE_FILE } from '{npm-name}'
 const words = $INLINE_FILE('../data/words.txt').split(' ')
 ----
 
-The last line will be transformed to:
+This will be transformed into:
 
 [source, js]
 const words = "lorem ipsum dolor\n".strip().split(' ');
@@ -49,7 +48,7 @@ import { $INLINE_JSON } from '{npm-name}'
 const pkg = $INLINE_JSON('../package.json')
 ----
 
-The last line will be transformed to:
+This will be transformed into:
 
 [source, js]
 const pkg = { "name": "my-package", "version": "0.1.0", "license": "MIT", ... }

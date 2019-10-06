@@ -10,12 +10,10 @@
     "build": "ttsc",
     "clean": "rimraf lib"
   },
-  "dependencies": {
-    "ts-transformer-inline-file": "link:../../../"
-  },
   "devDependencies": {
     "@types/node": "^10.13.0",
     "rimraf": "^3.0.0",
+    "ts-transformer-inline-file": "link:../../../",
     "ttypescript": "^1.5.7",
     "typescript": "^3.6.3"
   }

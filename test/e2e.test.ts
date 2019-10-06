@@ -7,6 +7,7 @@ import test from 'tape'
 
 
 const fixtureDir = path.join(__dirname, 'fixtures/proj-a')
+const pkgName = 'ts-transformer-inline-file'
 
 const readFile = (filename: string) => fs.readFileSync(filename, 'utf8')
 
@@ -29,6 +30,8 @@ test('$INLINE_FILE', t => {
   t.notIncludes(source, '$INLINE_FILE')
   t.includes(source, "foo = \"lorem ipsum dolor\\n\".split(' ')")
 
+  t.notIncludes(source, `require("${pkgName}")`)
+
   t.end()
 })
 
@@ -38,6 +41,8 @@ test('$INLINE_JSON', t => {
   t.notIncludes(source, '$INLINE_JSON')
   t.includes(source, 'foo = { "str": "lol", "num-x": 42, "ary": ["foo", false], "obj": { "a": null } }')
 
+  t.notIncludes(source, `require("${pkgName}")`)
+
   t.end()
 })
 
@@ -46,6 +51,8 @@ test('$INLINE_JSON with object destructuring', t => {
 
   t.notIncludes(source, '$INLINE_JSON')
   t.includes(source, '{ name, version: VER } = { "name": "fixture-package", "version": "0.1.0" }')
+
+  t.notIncludes(source, `require("${pkgName}")`)
 
   t.end()
 })
