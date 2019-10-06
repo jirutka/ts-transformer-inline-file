@@ -6,6 +6,7 @@
 node_modules/
 /*.d.ts
 /index.js
+/README.md
 /transformer.js
 *.log
 *.[jt]s.map
