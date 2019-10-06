@@ -57,11 +57,29 @@ function handleInlineCallExpression (node: ts.CallExpression, funcName: string):
   const baseDir = path.dirname(node.getSourceFile().fileName)
   const content = fs.readFileSync(path.resolve(baseDir, filename), 'utf-8')
 
-  return ts.createStringLiteral(content)
+  switch (funcName) {
+    case '$INLINE_FILE':
+      return ts.createStringLiteral(content)
+    case '$INLINE_JSON':
+      return createJSONParseCall(JSON.stringify(JSON.parse(content)))
+    default:
+      throw RangeError(`Unknown function: ${funcName}`)
+  }
 }
 
 function isOurStubModule (sourceFile: ts.SourceFile): boolean {
   // Comparing of the file names may not be reliable, it doesn't work e.g. with
   // yarn's "link" resolution used in this module's end-to-end tests.
   return sourceFile.text === stubModuleSource
+}
+
+function createJSONParseCall (arg0: string): ts.CallExpression {
+  return ts.createCall(
+    ts.createPropertyAccess(
+      ts.createIdentifier('JSON'),
+      ts.createIdentifier('parse'),
+    ),
+    undefined,
+    [ts.createStringLiteral(arg0)],
+  )
 }

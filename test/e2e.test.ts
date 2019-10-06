@@ -31,3 +31,13 @@ test('$INLINE_FILE', t => {
 
   t.end()
 })
+
+test('$INLINE_JSON', t => {
+  const source = readFile('./lib/inline-json.js')
+  const obj = JSON.parse(readFile('./config.json'))
+
+  t.notIncludes(source, '$INLINE_JSON')
+  t.includes(source, `foo = JSON.parse(${JSON.stringify(JSON.stringify(obj))})`)
+
+  t.end()
+})
