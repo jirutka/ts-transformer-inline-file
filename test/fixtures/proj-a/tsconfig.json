@@ -18,9 +18,6 @@
 
     "moduleResolution": "node",
     "baseUrl": "./src",
-    "paths": {
-      "package.json": ["../node_modules/ts-transformer-inline-file"]
-    },
 
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
