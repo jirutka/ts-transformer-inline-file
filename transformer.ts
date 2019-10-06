@@ -21,13 +21,21 @@ function visitNodeAndChildren (node: ts.Node, program: ts.Program, context: ts.T
 }
 
 function visitNode (node: ts.Node, program: ts.Program): ts.Node | undefined {
-  if (ts.isCallExpression(node)) {
-    return visitCallExpression(node, program)
+  try {
+    if (ts.isCallExpression(node)) {
+      return visitCallExpression(node, program)
+    }
+    if (ts.isImportDeclaration(node)) {
+      return visitImportClause(node, program)
+    }
+    return node
+
+  } catch (err) {
+    if (err instanceof Error) {
+      enhanceErrorStack(err, node)
+    }
+    throw err
   }
-  if (ts.isImportDeclaration(node)) {
-    return visitImportClause(node, program)
-  }
-  return node
 }
 
 function visitCallExpression (node: ts.CallExpression, program: ts.Program): ts.Node {
@@ -136,4 +144,19 @@ function jsonToAST (obj: any): ts.Expression {
     }))
   }
   return ts.createLiteral(obj)
+}
+
+function enhanceErrorStack (err: Error, node: ts.Node): void {
+  if (err.stack == null) { return }
+
+  const lines = err.stack.split('\n')
+  const line1 = lines[1] || ''
+  const indent = ' '.repeat(line1.length - line1.trimLeft().length)
+
+  const source = node.getSourceFile()
+  const loc = ts.getLineAndCharacterOfPosition(source, node.pos)
+  const newLine = `${indent}at ${source.fileName}:${loc.line + 1}:${loc.character + 1}`
+
+  lines.splice(1, 0, newLine)
+  err.stack = lines.join('\n')
 }
