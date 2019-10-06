@@ -28,7 +28,7 @@ Add {npm-name} package to your project as a **dev**elopment dependency and <<How
 ----
 import { $INLINE_FILE } from '{npm-name}'
 
-const words = $INLINE_FILE('../data/words.txt').split(' ')
+const words = $INLINE_FILE('../data/words.txt').trim().split(' ')
 ----
 
 This will be transformed into:
