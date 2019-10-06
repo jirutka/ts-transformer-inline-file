@@ -34,7 +34,7 @@ const words = $INLINE_FILE('../data/words.txt').split(' ')
 This will be transformed into:
 
 [source, js]
-const words = "lorem ipsum dolor\n".strip().split(' ');
+const words = "lorem ipsum dolor\n".trim().split(' ');
 
 …where `"lorem ipsum dolor\n"` is full content of the file `../data/words.txt`.
 
