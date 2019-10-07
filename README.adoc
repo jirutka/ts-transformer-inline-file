@@ -168,7 +168,7 @@ ifndef::npm-readme[]
 
 . Clone this repository:
 [source, subs="+attributes"]
-git clone git@github.com:{gh-name}.git
+git clone https://github.com/{gh-name}.git
 cd {npm-name}
 
 . Install Yarn (if you don’t have it already):
