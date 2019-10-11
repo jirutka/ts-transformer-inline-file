@@ -99,7 +99,7 @@ All you have to do is to use these wrappers instead of the original commands and
 [source, js, subs="+attributes"]
 ----
 import typescript from 'rollup-plugin-typescript2'
-import packageJsonTransformer from '{npm-name}/transformer'
+import inlineFileTransformer from '{npm-name}/transformer'
 
 export default {
   // ...
@@ -107,7 +107,7 @@ export default {
     typescript({
       transformers: [
         (service) => ({
-          before: [ packageJsonTransformer(service.getProgram()) ],
+          before: [ inlineFileTransformer(service.getProgram()) ],
           after: [],
         }),
       ],
@@ -122,7 +122,7 @@ export default {
 .webpack.config.js:
 [source, js, subs="+attributes"]
 ----
-const packageJsonTransformer = require('{npm-name}/transformer').default
+const inlineFileTransformer = require('{npm-name}/transformer').default
 
 module.exports = {
   // ...
@@ -134,7 +134,7 @@ module.exports = {
         options: {
           getCustomTransformers: (program) => ({
             before: [
-              packageJsonTransformer(program),
+              inlineFileTransformer(program),
             ],
           }),
         },
