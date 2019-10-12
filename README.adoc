@@ -149,7 +149,7 @@ ifndef::npm-readme[]
 
 == Development
 
-== System Requirements
+=== System Requirements
 
 * https://nodejs.org[NodeJS] 10.13+
 * https://yarnpkg.com[yarn] 1.6+ (but you may use npm as well)
