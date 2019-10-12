@@ -152,7 +152,6 @@ ifndef::npm-readme[]
 === System Requirements
 
 * https://nodejs.org[NodeJS] 10.13+
-* https://yarnpkg.com[yarn] 1.6+ (but you may use npm as well)
 * https://pandoc.org[Pandoc] and https://asciidoctor.org[Asciidoctor] (used only for converting README.adoc to Markdown for npmjs)
 
 
