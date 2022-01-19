@@ -72,7 +72,7 @@ function visitImportClause (node: ts.ImportDeclaration, program: ts.Program): ts
   }
 
   const importSymbol = program.getTypeChecker().getSymbolAtLocation(node.moduleSpecifier)
-  if (!importSymbol || !isOurStubModule(importSymbol.valueDeclaration.getSourceFile())) {
+  if (!importSymbol || !importSymbol.valueDeclaration || !isOurStubModule(importSymbol.valueDeclaration.getSourceFile())) {
     return node
   }
 
