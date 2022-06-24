@@ -5,7 +5,7 @@
 :vs-marketplace-uri: https://marketplace.visualstudio.com/items?itemName=
 
 ifdef::env-github[]
-image:https://travis-ci.com/{gh-name}.svg?branch={gh-branch}[Build Status, link="https://travis-ci.com/{gh-name}"]
+image:https://github.com/{gh-name}/workflows/CI/badge.svg[Build Status, link=https://github.com/{gh-name}/actions?query=workflow%3A%22CI%22]
 image:https://img.shields.io/npm/v/{npm-name}.svg[npm Version, link="https://www.npmjs.org/package/{npm-name}"]
 endif::env-github[]
 
