@@ -15,6 +15,6 @@
     "rimraf": "^3.0.0",
     "ts-transformer-inline-file": "link:../../../",
     "ttypescript": "^1.5.7",
-    "typescript": "^3.6.3"
+    "typescript": "~3.6.3"
   }
 }
