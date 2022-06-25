@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import ts from 'typescript'
+import * as ts from 'typescript'
 
 
 const stubModuleSource = fs.readFileSync(path.join(__dirname, 'index.d.ts'), 'utf8')
@@ -53,7 +53,7 @@ function visitCallExpression (node: ts.CallExpression, program: ts.Program): ts.
     return node
   }
 
-  const funcName = declaration.name && declaration.name.getText()
+  const funcName = declaration.name?.getText()
   if (!funcName) {
     return node
   }
@@ -96,13 +96,15 @@ function handleInlineCallExpression (node: ts.CallExpression, funcName: string):
     }
     case '$INLINE_JSON': {
       const parent = node.parent
-      let obj = JSON.parse(content)
+      let obj: unknown = JSON.parse(content)
 
       if (ts.isVariableDeclaration(parent) && ts.isObjectBindingPattern(parent.name)) {
         if (typeof obj !== 'object') {
           throw TypeError(`${filename} does not contain an object as expected`)
         }
-        obj = filterObjectByBindingPattern(obj, parent.name)
+        if (obj !== null) {
+          obj = filterObjectByBindingPattern(obj, parent.name)
+        }
       }
       return jsonToAST(obj)
     }
@@ -118,19 +120,20 @@ function isOurStubModule (sourceFile: ts.SourceFile): boolean {
   return sourceFile.text === stubModuleSource
 }
 
-function filterObjectByBindingPattern (obj: any, binding: ts.ObjectBindingPattern): any {
-  return binding.elements.reduce((acc, { propertyName, name }) => {
+function filterObjectByBindingPattern (obj: object, binding: ts.ObjectBindingPattern): any {
+  return binding.elements.reduce<Record<string, unknown>>((acc, { propertyName, name }) => {
     const propName = propertyName && ts.isIdentifier(propertyName) ? propertyName.text
       : ts.isIdentifier(name) ? name.text
       : undefined
     if (propName) {
-      acc[propName] = obj[propName]
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      acc[propName] = (obj as any)[propName]
     }
     return acc
-  }, {} as any)
+  }, {})
 }
 
-function jsonToAST (obj: any): ts.Expression {
+function jsonToAST (obj: unknown): ts.Expression {
   switch (typeof obj) {
     case 'object': {
       if (obj === null) {
@@ -141,7 +144,8 @@ function jsonToAST (obj: any): ts.Expression {
       }
       return ts.factory.createObjectLiteralExpression(Object.keys(obj).map(key => {
         const propName = ts.factory.createStringLiteral(key)
-        return ts.factory.createPropertyAssignment(propName, jsonToAST(obj[key]))
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return ts.factory.createPropertyAssignment(propName, jsonToAST((obj as any)[key]))
       }))
     }
     case 'number': return ts.factory.createNumericLiteral(obj)

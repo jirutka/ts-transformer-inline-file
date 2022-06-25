@@ -33,6 +33,7 @@ module.exports = {
     'func-call-spacing': 'off',
     'linebreak-style': ['error', 'unix'],
     'lines-between-class-members': 'off',
+    'multiline-ternary': 'off',
     // Disable in favour of TypeScript rule.
     'no-extra-semi': 'off',
     'no-multi-spaces': ['warn', {
