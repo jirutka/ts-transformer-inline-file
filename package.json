@@ -1,6 +1,6 @@
 {
   "name": "ts-transformer-inline-file",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A TypeScript custom transformer for inlining files",
   "author": "Jakub Jirutka <jakub@jirutka.cz>",
   "license": "MIT",
