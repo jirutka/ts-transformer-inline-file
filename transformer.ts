@@ -92,7 +92,7 @@ function handleInlineCallExpression (node: ts.CallExpression, funcName: string):
 
   switch (funcName) {
     case '$INLINE_FILE': {
-      return ts.createStringLiteral(content)
+      return ts.factory.createStringLiteral(content)
     }
     case '$INLINE_JSON': {
       const parent = node.parent
@@ -131,19 +131,24 @@ function filterObjectByBindingPattern (obj: any, binding: ts.ObjectBindingPatter
 }
 
 function jsonToAST (obj: any): ts.Expression {
-  if (obj === null) {
-    return ts.createNull()
+  switch (typeof obj) {
+    case 'object': {
+      if (obj === null) {
+        return ts.factory.createNull()
+      }
+      if (Array.isArray(obj)) {
+        return ts.factory.createArrayLiteralExpression(obj.map(jsonToAST))
+      }
+      return ts.factory.createObjectLiteralExpression(Object.keys(obj).map(key => {
+        const propName = ts.factory.createStringLiteral(key)
+        return ts.factory.createPropertyAssignment(propName, jsonToAST(obj[key]))
+      }))
+    }
+    case 'number': return ts.factory.createNumericLiteral(obj)
+    case 'boolean': return obj ? ts.factory.createTrue() : ts.factory.createFalse()
+    case 'string': return ts.factory.createStringLiteral(obj, /* isSingleQuote */ undefined)
+    default: throw TypeError(`Unexpected type in JSON object: "${String(obj)}" (${typeof obj})`)
   }
-  if (Array.isArray(obj)) {
-    return ts.createArrayLiteral(obj.map(jsonToAST))
-  }
-  if (typeof obj === 'object') {
-    return ts.createObjectLiteral(Object.keys(obj).map(key => {
-      const propName = ts.createStringLiteral(key)
-      return ts.createPropertyAssignment(propName, jsonToAST(obj[key]))
-    }))
-  }
-  return ts.createLiteral(obj)
 }
 
 function enhanceErrorStack (err: Error, node: ts.Node): void {
@@ -151,7 +156,7 @@ function enhanceErrorStack (err: Error, node: ts.Node): void {
 
   const lines = err.stack.split('\n')
   const line1 = lines[1] || ''
-  const indent = ' '.repeat(line1.length - line1.trimLeft().length)
+  const indent = ' '.repeat(line1.length - line1.trimStart().length)
 
   const source = node.getSourceFile()
   const loc = ts.getLineAndCharacterOfPosition(source, node.pos)
